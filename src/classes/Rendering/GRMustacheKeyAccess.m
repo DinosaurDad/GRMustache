@@ -128,9 +128,17 @@ static Class NSManagedObjectClass;
     
     // Try objectForKeyedSubscript: first (see https://github.com/groue/GRMustache/issues/66:)
     
+#if __clang_major__ < 9
+    // Xcode 8-
     if ([object respondsToSelector:@selector(objectForKeyedSubscript:)]) {
         return [object objectForKeyedSubscript:key];
     }
+#else
+    // Xcode 9+
+    if (@available(macOS 10.8, iOS 6.0, watchOS 2.0, tvOS 9.0, *)) {
+      return [object objectForKeyedSubscript:key];
+    }
+#endif
     
     
     // Then try valueForKey: for safe keys
